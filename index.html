@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f5f3eb">
+  <meta name="description" content="A calm, fridge-friendly daily schedule planner for the whole household.">
+  <title>Dayboard — a little plan for today</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <main class="board">
+    <header class="topbar">
+      <a class="brand" href="#today" aria-label="Dayboard home"><span class="brand-mark">d</span> dayboard</a>
+      <span class="privacy"><span aria-hidden="true">●</span> Saved on this device</span>
+    </header>
+
+    <section class="intro" id="today" aria-labelledby="title">
+      <div>
+        <p class="eyebrow">A LITTLE PLAN FOR TODAY</p>
+        <h1 id="title">Make room for<br><em>the good stuff.</em></h1>
+      </div>
+      <div class="date-controls" aria-label="Choose a day">
+        <button class="icon-button" id="previous-day" aria-label="Previous day">←</button>
+        <time id="selected-date"></time>
+        <button class="icon-button" id="next-day" aria-label="Next day">→</button>
+        <button class="today-button" id="go-today">Today</button>
+      </div>
+    </section>
+
+    <section class="summary" aria-label="Daily progress">
+      <div><span class="summary-label">TODAY'S PLAN</span><strong id="task-count">0 plans</strong></div>
+      <div class="progress-track" aria-hidden="true"><span id="progress-fill"></span></div>
+      <span class="progress-label" id="progress-label">A fresh start</span>
+    </section>
+
+    <section class="schedule-section" aria-labelledby="schedule-title">
+      <div class="section-heading"><h2 id="schedule-title">Your day, at a glance</h2><span>Tap a plan when it’s done</span></div>
+      <div id="schedule" class="schedule" aria-live="polite"></div>
+      <p id="empty-state" class="empty-state" hidden>No plans on the board yet. Add one below to get started.</p>
+    </section>
+
+    <form id="add-form" class="add-form">
+      <label class="sr-only" for="task-title">What’s the plan?</label>
+      <input id="task-title" name="title" maxlength="80" placeholder="Add a plan to your day…" required>
+      <label class="sr-only" for="task-time">Time</label>
+      <input id="task-time" name="time" type="time" value="09:00" required>
+      <label class="sr-only" for="task-category">Category</label>
+      <select id="task-category" name="category" aria-label="Plan category">
+        <option value="home">Home</option><option value="work">Work</option><option value="food">Food</option><option value="fun">Fun</option>
+      </select>
+      <button class="add-button" type="submit"><span aria-hidden="true">＋</span> Add plan</button>
+    </form>
+
+    <footer><span>Little steps make a lovely day.</span><button id="clear-done" class="text-button" type="button">Clear completed</button></footer>
+  </main>
+</body>
+</html>
+
