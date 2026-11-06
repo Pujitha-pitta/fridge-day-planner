@@ -240,3 +240,137 @@ if ('serviceWorker' in navigator && location.protocol === 'https:') {
     appStatus.textContent = 'Offline support could not be enabled in this browser.';
   });
 }
+
+
+const HOUSEHOLD_KEY = 'fridge-day-planner-household-v1';
+const WEATHER_KEY = 'fridge-day-planner-weather-v1';
+const householdName = document.querySelector('#household-name');
+const householdDialog = document.querySelector('#household-dialog');
+const householdForm = document.querySelector('#household-form');
+const weatherDialog = document.querySelector('#weather-dialog');
+const weatherForm = document.querySelector('#weather-form');
+const weatherStatus = document.querySelector('#weather-status');
+let weatherPlace = null;
+
+function renderClock() {
+  const now = new Date();
+  document.querySelector('#clock-time').textContent = new Intl.DateTimeFormat(undefined, { hour: 'numeric', minute: '2-digit' }).format(now);
+  dateLabel.dateTime = dayKey(selectedDay);
+  dateLabel.textContent = new Intl.DateTimeFormat(undefined, { weekday: 'long', month: 'long', day: 'numeric' }).format(selectedDay);
+}
+setInterval(renderClock, 30000);
+renderClock();
+
+function loadHouseholdName() {
+  try {
+    return localStorage.getItem(HOUSEHOLD_KEY) || 'Family';
+  } catch {
+    return 'Family';
+  }
+}
+function renderHouseholdName() {
+  householdName.textContent = loadHouseholdName();
+}
+document.querySelector('#edit-household').addEventListener('click', () => {
+  document.querySelector('#household-input').value = loadHouseholdName();
+  householdDialog.showModal();
+});
+document.querySelector('#cancel-household').addEventListener('click', () => householdDialog.close());
+householdForm.addEventListener('submit', event => {
+  event.preventDefault();
+  const name = String(new FormData(householdForm).get('household')).trim();
+  if (!name) return;
+  localStorage.setItem(HOUSEHOLD_KEY, name);
+  renderHouseholdName();
+  householdDialog.close();
+});
+
+function weatherForCode(code) {
+  if (code === 0) return ['☀', 'Clear'];
+  if (code === 1 || code === 2) return ['⛅', 'Partly cloudy'];
+  if (code === 3) return ['☁', 'Overcast'];
+  if (code === 45 || code === 48) return ['🌫', 'Foggy'];
+  if ([51, 53, 55, 56, 57, 61, 63, 65, 66, 67, 80, 81, 82].includes(code)) return ['🌧', 'Rain'];
+  if ([71, 73, 75, 77, 85, 86].includes(code)) return ['❄', 'Snow'];
+  if ([95, 96, 99].includes(code)) return ['⛈', 'Thunderstorms'];
+  return ['🌤', 'Conditions updated'];
+}
+
+function showWeatherPlace(place) {
+  weatherPlace = place;
+  document.querySelector('#weather-location').textContent = place ? [place.name, place.admin1, place.country].filter(Boolean).join(', ') : '';
+}
+function loadSavedWeather() {
+  try {
+    const stored = JSON.parse(localStorage.getItem(WEATHER_KEY));
+    if (stored && Number.isFinite(stored.latitude) && Number.isFinite(stored.longitude)) showWeatherPlace(stored);
+  } catch {
+    localStorage.removeItem(WEATHER_KEY);
+  }
+}
+async function updateWeather() {
+  if (!weatherPlace) return;
+  document.querySelector('#weather-description').textContent = 'Updating forecast…';
+  try {
+    const params = new URLSearchParams({
+      latitude: weatherPlace.latitude,
+      longitude: weatherPlace.longitude,
+      current: 'temperature_2m,weather_code',
+      temperature_unit: 'celsius',
+      timezone: 'auto'
+    });
+    const response = await fetch(`https://api.open-meteo.com/v1/forecast?${params}`);
+    if (!response.ok) throw new Error('Weather request failed');
+    const payload = await response.json();
+    const current = payload.current;
+    const [icon, description] = weatherForCode(current.weather_code);
+    document.querySelector('#weather-icon').textContent = icon;
+    document.querySelector('#weather-temperature').textContent = `${Math.round(current.temperature_2m)}°C`;
+    document.querySelector('#weather-description').textContent = description;
+  } catch {
+    document.querySelector('#weather-description').textContent = 'Weather unavailable. Your schedule still works.';
+  }
+}
+
+document.querySelector('#set-weather').addEventListener('click', () => {
+  document.querySelector('#weather-city').value = weatherPlace?.name || '';
+  weatherStatus.textContent = '';
+  weatherDialog.showModal();
+});
+document.querySelector('#cancel-weather').addEventListener('click', () => weatherDialog.close());
+weatherForm.addEventListener('submit', async event => {
+  event.preventDefault();
+  const city = String(new FormData(weatherForm).get('city')).trim();
+  if (city.length < 2) {
+    weatherStatus.textContent = 'Enter at least two characters.';
+    return;
+  }
+  weatherStatus.textContent = 'Finding the city…';
+  const button = weatherForm.querySelector('button[type="submit"]');
+  button.disabled = true;
+  try {
+    const params = new URLSearchParams({ name: city, count: '1', language: 'en', format: 'json' });
+    const response = await fetch(`https://geocoding-api.open-meteo.com/v1/search?${params}`);
+    if (!response.ok) throw new Error('City search failed');
+    const payload = await response.json();
+    const result = payload.results?.[0];
+    if (!result) {
+      weatherStatus.textContent = 'We couldn’t find that city. Try a nearby larger town.';
+      return;
+    }
+    const place = { name: result.name, admin1: result.admin1 || '', country: result.country || '', latitude: result.latitude, longitude: result.longitude };
+    localStorage.setItem(WEATHER_KEY, JSON.stringify(place));
+    showWeatherPlace(place);
+    weatherDialog.close();
+    await updateWeather();
+  } catch {
+    weatherStatus.textContent = 'Could not reach the weather service. Please try again.';
+  } finally {
+    button.disabled = false;
+  }
+});
+
+renderHouseholdName();
+loadSavedWeather();
+updateWeather();
+setInterval(updateWeather, 30 * 60 * 1000);
