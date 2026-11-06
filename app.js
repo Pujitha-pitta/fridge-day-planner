@@ -168,3 +168,75 @@ document.querySelector('#cancel-edit').addEventListener('click', () => {
 
 render();
 
+
+\n// Fridge-side display controls
+const fullscreenButton = document.querySelector('#fullscreen-button');
+const awakeButton = document.querySelector('#awake-button');
+const appStatus = document.querySelector('#app-status');
+let wakeLock = null;
+let keepAwakeRequested = false;
+
+function syncFullscreenButton() {
+  const active = Boolean(document.fullscreenElement);
+  fullscreenButton.setAttribute('aria-pressed', String(active));
+  fullscreenButton.textContent = active ? 'Exit full screen' : 'Full screen';
+}
+
+fullscreenButton.addEventListener('click', async () => {
+  try {
+    if (document.fullscreenElement) await document.exitFullscreen();
+    else if (document.documentElement.requestFullscreen) await document.documentElement.requestFullscreen();
+    else appStatus.textContent = 'Full screen is not available in this browser.';
+  } catch {
+    appStatus.textContent = 'Full screen could not be started. Try your browser’s full screen option.';
+  }
+});
+document.addEventListener('fullscreenchange', syncFullscreenButton);
+
+function syncAwakeButton() {
+  awakeButton.setAttribute('aria-pressed', String(keepAwakeRequested));
+  awakeButton.textContent = keepAwakeRequested ? 'Screen awake' : 'Keep screen awake';
+}
+
+async function requestScreenWakeLock() {
+  if (!('wakeLock' in navigator)) {
+    keepAwakeRequested = false;
+    syncAwakeButton();
+    appStatus.textContent = 'This browser cannot keep the screen awake. Change the device display timeout in its settings.';
+    return;
+  }
+  try {
+    wakeLock = await navigator.wakeLock.request('screen');
+    syncAwakeButton();
+    wakeLock.addEventListener('release', () => {
+      wakeLock = null;
+      if (keepAwakeRequested && document.visibilityState === 'visible') requestScreenWakeLock();
+    }, { once: true });
+  } catch {
+    keepAwakeRequested = false;
+    syncAwakeButton();
+    appStatus.textContent = 'The browser could not keep the screen awake. Change the device display timeout in its settings.';
+  }
+}
+
+awakeButton.addEventListener('click', async () => {
+  keepAwakeRequested = !keepAwakeRequested;
+  if (!keepAwakeRequested && wakeLock) {
+    const currentLock = wakeLock;
+    wakeLock = null;
+    await currentLock.release();
+  } else if (keepAwakeRequested) {
+    await requestScreenWakeLock();
+  }
+  syncAwakeButton();
+});
+
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'visible' && keepAwakeRequested && !wakeLock) requestScreenWakeLock();
+});
+
+if ('serviceWorker' in navigator && location.protocol === 'https:') {
+  navigator.serviceWorker.register('./service-worker.js').catch(() => {
+    appStatus.textContent = 'Offline support could not be enabled in this browser.';
+  });
+}
