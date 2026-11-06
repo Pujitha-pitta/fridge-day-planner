@@ -3,11 +3,11 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#f5f3eb">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-title" content="Fridge Planner">
-  <meta name="theme-color" content="#f5f3eb">
-  <meta name="description" content="A shared household schedule planner designed to stay open on a kitchen fridge for quick daily planning.">
-  <title>Fridge Day Planner — your household plan at a glance</title>
+  <meta name="description" content="A family dashboard for a smart fridge screen, with the date, local weather, and household schedule in one glance.">
+  <title>Fridge Day Planner — family dashboard</title>
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="icon" href="fridge-icon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="styles.css">
@@ -24,20 +24,34 @@
       </div>
     </header>
 
-    <section class="intro" id="today" aria-labelledby="title">
-      <div>
-        <p class="eyebrow">TODAY ON THE FRIDGE</p>
-        <h1 id="title">Your household’s day,<br><em>right on the fridge.</em></h1>
+    <section class="fridge-dashboard" id="today" aria-label="Household overview">
+      <div class="welcome-card">
+        <p class="eyebrow">YOUR HOME, AT A GLANCE</p>
+        <h1>Welcome,<br><em id="household-name">Family</em></h1>
+        <button id="edit-household" class="text-button household-edit" type="button">Personalize greeting</button>
       </div>
-      <div class="date-controls" aria-label="Choose a day">
-        <button class="icon-button" id="previous-day" aria-label="Previous day">←</button>
-        <time id="selected-date"></time>
-        <button class="icon-button" id="next-day" aria-label="Next day">→</button>
-        <button class="today-button" id="go-today">Today</button>
+      <div class="overview-cards">
+        <section class="clock-card" aria-label="Current date and time">
+          <div><span class="card-label">RIGHT NOW</span><time id="clock-time">--:--</time></div>
+          <div class="clock-date"><time id="selected-date"></time>
+            <div class="date-controls" aria-label="Choose schedule day">
+              <button class="icon-button" id="previous-day" aria-label="Previous day">←</button>
+              <button class="today-button" id="go-today">Today</button>
+              <button class="icon-button" id="next-day" aria-label="Next day">→</button>
+            </div>
+          </div>
+        </section>
+        <section class="weather-card" aria-labelledby="weather-title">
+          <div class="weather-heading"><div><span class="card-label">OUTSIDE TODAY</span><h2 id="weather-title">Weather</h2></div>
+            <button id="set-weather" class="weather-edit" type="button">Set city</button></div>
+          <div class="weather-content"><span id="weather-icon" aria-hidden="true">☀</span><strong id="weather-temperature">--°</strong>
+            <div><p id="weather-description">Choose a city to see local weather</p><p id="weather-location"></p></div></div>
+          <a class="weather-credit" href="https://open-meteo.com/" target="_blank" rel="noopener noreferrer">Weather by Open-Meteo</a>
+        </section>
       </div>
     </section>
 
-    <aside class="fridge-note"><img class="fridge-note-icon" src="fridge-icon.svg" alt="" aria-hidden="true"><p>Made for a shared tablet or phone kept by the fridge. Install it on that screen so everyone can check and update the household plan.</p></aside>
+    <aside class="fridge-note"><span class="fridge-note-icon" aria-hidden="true">✳</span><p>One glance for the whole household: check the weather, see what’s next, and update plans right here.</p></aside>
 
     <section class="summary" aria-label="Daily progress">
       <div><span class="summary-label">HOUSEHOLD PLAN</span><strong id="task-count">0 plans</strong></div>
@@ -46,7 +60,7 @@
     </section>
 
     <section class="schedule-section" aria-labelledby="schedule-title">
-      <div class="section-heading"><h2 id="schedule-title">Everyone’s day, at a glance</h2><span>Keep this open by the fridge</span></div>
+      <div class="section-heading"><h2 id="schedule-title">Everyone’s day, at a glance</h2><span>Tap a plan when it’s done</span></div>
       <div id="schedule" class="schedule" aria-live="polite"></div>
       <p id="empty-state" class="empty-state" hidden>No plans on the board yet. Add one below to get started.</p>
     </section>
@@ -76,8 +90,29 @@
         <div class="edit-actions"><button id="cancel-edit" class="today-button" type="button">Cancel</button><button class="add-button" type="submit">Save changes</button></div>
       </form>
     </dialog>
+
+    <dialog id="household-dialog" class="edit-dialog" aria-labelledby="household-heading">
+      <form id="household-form" class="edit-form">
+        <h2 id="household-heading">Personalize your greeting</h2>
+        <label for="household-input">Household name</label>
+        <input id="household-input" name="household" maxlength="32" placeholder="Family" required>
+        <div class="edit-actions"><button id="cancel-household" class="today-button" type="button">Cancel</button><button class="add-button" type="submit">Save name</button></div>
+      </form>
+    </dialog>
+
+    <dialog id="weather-dialog" class="edit-dialog" aria-labelledby="weather-dialog-title">
+      <form id="weather-form" class="edit-form">
+        <h2 id="weather-dialog-title">Set your weather city</h2>
+        <label for="weather-city">City or town</label>
+        <input id="weather-city" name="city" maxlength="80" placeholder="e.g. Pune" autocomplete="address-level2" required>
+        <p class="privacy-note">When you request a forecast, this city is sent to Open-Meteo to find its weather. The app does not request your precise location.</p>
+        <p id="weather-status" class="weather-status" role="status" aria-live="polite"></p>
+        <div class="edit-actions"><button id="cancel-weather" class="today-button" type="button">Cancel</button><button class="add-button" type="submit">Get forecast</button></div>
+      </form>
+    </dialog>
+
     <footer><span>A simple plan everyone can see.</span><button id="clear-done" class="text-button" type="button">Clear completed</button></footer>
+    <p id="app-status" class="sr-only" role="status" aria-live="polite"></p>
   </main>
 </body>
 </html>
-
