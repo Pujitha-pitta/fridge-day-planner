@@ -1,17 +1,14 @@
 # Fridge Day Planner
 
-A model-independent, browser-based household dashboard inspired by built-in smart-fridge screens. It puts a family greeting, live date and time, local weather, and a shared daily schedule together in one glance.
+A Samsung Family Hub refrigerator dashboard with the family greeting “Welcome, Pitta's Family,” a clock that follows the selected weather city's time zone, local weather, and a shared daily schedule. It is designed for the fridge's built-in touchscreen and browser.
 
-## Run it
+## Open it on a Samsung Family Hub fridge
 
-Open the [live Fridge Day Planner](https://pujitha-pitta.github.io/fridge-day-planner/) in a browser on a fridge display that supports modern web pages, or on a phone/tablet by the fridge. Compatibility with built-in displays varies by model. No build step or account is needed.
+Open the Family Hub's built-in browser (if your model provides one) and visit the [live Fridge Day Planner](https://pujitha-pitta.github.io/fridge-day-planner/). Use its full-screen option if available. Set the weather city once; the displayed clock will follow that city's time zone. The greeting and schedule are saved in that fridge browser.
 
-## Use it by the fridge
+This repository is a web dashboard, not a Samsung-certified Family Hub app. Samsung says only apps listed in the fridge's Apps menu can be installed; custom Family Hub apps use Samsung's Family Hub development tools and require device/platform-specific packaging and distribution. Whether this page opens in the built-in browser depends on the Family Hub model and software version. See [Samsung's Family Hub developer page](https://developer.samsung.com/family-hub) and [Samsung app availability guidance](https://www.samsung.com/us/support/answer/ANS10006847/).
 
-- On Android, open the site in Chrome and use the browser menu to install it or add it to the home screen.
-- On iPhone or iPad, open it in Safari, tap Share, then Add to Home Screen.
-- Keep the device plugged in and use Full screen. Keep screen awake works in browsers that support the Screen Wake Lock API.
-- Plans are stored on this device only. The app does not sync to other household members’ phones.
+Plans are stored in that browser only and do not sync to phones or other household screens.
 
 ## Features
 
