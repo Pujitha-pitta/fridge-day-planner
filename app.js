@@ -169,7 +169,8 @@ document.querySelector('#cancel-edit').addEventListener('click', () => {
 render();
 
 
-\n// Fridge-side display controls
+
+// Fridge-side display controls
 const fullscreenButton = document.querySelector('#fullscreen-button');
 const awakeButton = document.querySelector('#awake-button');
 const appStatus = document.querySelector('#app-status');
@@ -243,6 +244,7 @@ if ('serviceWorker' in navigator && location.protocol === 'https:') {
 
 
 const HOUSEHOLD_KEY = 'fridge-day-planner-household-v1';
+const DEFAULT_HOUSEHOLD = "Pitta's Family";
 const WEATHER_KEY = 'fridge-day-planner-weather-v1';
 const householdName = document.querySelector('#household-name');
 const householdDialog = document.querySelector('#household-dialog');
@@ -263,9 +265,10 @@ renderClock();
 
 function loadHouseholdName() {
   try {
-    return localStorage.getItem(HOUSEHOLD_KEY) || 'Family';
+    const savedName = localStorage.getItem(HOUSEHOLD_KEY);
+    return savedName && savedName !== 'Family' ? savedName : DEFAULT_HOUSEHOLD;
   } catch {
-    return 'Family';
+    return DEFAULT_HOUSEHOLD;
   }
 }
 function renderHouseholdName() {
