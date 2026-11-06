@@ -53,6 +53,19 @@
       <button class="add-button" type="submit"><span aria-hidden="true">＋</span> Add plan</button>
     </form>
 
+    <dialog id="edit-dialog" class="edit-dialog" aria-labelledby="edit-heading">
+      <form id="edit-form" class="edit-form">
+        <input type="hidden" id="edit-id" name="id">
+        <h2 id="edit-heading">Edit your plan</h2>
+        <label for="edit-title">Plan</label>
+        <input id="edit-title" name="title" maxlength="80" required>
+        <div class="edit-row">
+          <div><label for="edit-time">Time</label><input id="edit-time" name="time" type="time" required></div>
+          <div><label for="edit-category">Category</label><select id="edit-category" name="category"><option value="home">Home</option><option value="work">Work</option><option value="food">Food</option><option value="fun">Fun</option></select></div>
+        </div>
+        <div class="edit-actions"><button id="cancel-edit" class="today-button" type="button">Cancel</button><button class="add-button" type="submit">Save changes</button></div>
+      </form>
+    </dialog>
     <footer><span>Little steps make a lovely day.</span><button id="clear-done" class="text-button" type="button">Clear completed</button></footer>
   </main>
 </body>
