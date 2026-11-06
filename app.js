@@ -92,7 +92,7 @@ function render() {
       document.querySelector('#edit-title').value = plan.title;
       document.querySelector('#edit-time').value = plan.time;
       document.querySelector('#edit-category').value = plan.category;
-      document.querySelector('#edit-dialog').showModal();
+      openDialog(document.querySelector('#edit-dialog'));
       document.querySelector('#edit-title').focus();
     });
     const remove = document.createElement('button');
@@ -158,7 +158,7 @@ document.querySelector('#edit-form').addEventListener('submit', event => {
     ? { ...plan, title, time: String(data.get('time')), category: String(data.get('category')) }
     : plan);
   savePlans();
-  document.querySelector('#edit-dialog').close();
+  closeDialog(document.querySelector('#edit-dialog'));
   render();
 });
 
@@ -251,20 +251,38 @@ let weatherPlace = null;
 
 function renderClock() {
   const now = new Date();
+  const clock = document.querySelector('#clock-time');
+  const zoneLabel = document.querySelector('#clock-zone');
   const options = { hour: 'numeric', minute: '2-digit' };
-  const zoneOptions = { timeZoneName: 'short' };
-  if (weatherPlace && weatherPlace.timezone) {
-    options.timeZone = weatherPlace.timezone;
-    zoneOptions.timeZone = weatherPlace.timezone;
+  if (weatherPlace && weatherPlace.timezone) options.timeZone = weatherPlace.timezone;
+  try {
+    clock.textContent = new Intl.DateTimeFormat(undefined, options).format(now);
+  } catch {
+    if (weatherPlace && Number.isFinite(weatherPlace.utcOffsetSeconds)) {
+      const shifted = new Date(now.getTime() + weatherPlace.utcOffsetSeconds * 1000);
+      const hour24 = shifted.getUTCHours();
+      const hour12 = hour24 % 12 || 12;
+      clock.textContent = hour12 + ':' + String(shifted.getUTCMinutes()).padStart(2, '0') + (hour24 >= 12 ? ' PM' : ' AM');
+    } else {
+      clock.textContent = new Intl.DateTimeFormat(undefined, { hour: 'numeric', minute: '2-digit' }).format(now);
+    }
   }
-  document.querySelector('#clock-time').textContent = new Intl.DateTimeFormat(undefined, options).format(now);
-  const zonePart = new Intl.DateTimeFormat(undefined, zoneOptions).formatToParts(now).find(part => part.type === 'timeZoneName');
-  document.querySelector('#clock-zone').textContent = zonePart ? zonePart.value : '';
+  if (zoneLabel) zoneLabel.textContent = weatherPlace && weatherPlace.timezone ? weatherPlace.timezone : '';
   dateLabel.dateTime = dayKey(selectedDay);
   dateLabel.textContent = new Intl.DateTimeFormat(undefined, { weekday: 'long', month: 'long', day: 'numeric' }).format(selectedDay);
 }
 setInterval(renderClock, 30000);
-renderClock();
+
+function openDialog(dialog) {
+  if (!dialog) return;
+  if (typeof dialog.showModal === 'function') dialog.showModal();
+  else dialog.setAttribute('open', '');
+}
+function closeDialog(dialog) {
+  if (!dialog) return;
+  if (typeof dialog.close === 'function') dialog.close();
+  else dialog.removeAttribute('open');
+}
 
 function weatherForCode(code) {
   if (code === 0) return ['☀', 'Clear'];
@@ -307,6 +325,7 @@ async function updateWeather() {
     const current = payload.current;
     if (payload.timezone) {
       weatherPlace.timezone = payload.timezone;
+      weatherPlace.utcOffsetSeconds = payload.utc_offset_seconds;
       localStorage.setItem(WEATHER_KEY, JSON.stringify(weatherPlace));
       renderClock();
     }
@@ -322,7 +341,7 @@ async function updateWeather() {
 document.querySelector('#set-weather').addEventListener('click', () => {
   document.querySelector('#weather-city').value = weatherPlace?.name || '';
   weatherStatus.textContent = '';
-  weatherDialog.showModal();
+  openDialog(weatherDialog);
 });
 document.querySelector('#cancel-weather').addEventListener('click', () => weatherDialog.close());
 weatherForm.addEventListener('submit', async event => {
@@ -345,10 +364,10 @@ weatherForm.addEventListener('submit', async event => {
       weatherStatus.textContent = 'We couldn’t find that city. Try a nearby larger town.';
       return;
     }
-    const place = { name: result.name, admin1: result.admin1 || '', country: result.country || '', latitude: result.latitude, longitude: result.longitude, timezone: result.timezone || '' };
+    const place = { name: result.name, admin1: result.admin1 || '', country: result.country || '', latitude: result.latitude, longitude: result.longitude, timezone: result.timezone || '', utcOffsetSeconds: 0 };
     localStorage.setItem(WEATHER_KEY, JSON.stringify(place));
     showWeatherPlace(place);
-    weatherDialog.close();
+    closeDialog(weatherDialog);
     await updateWeather();
   } catch {
     weatherStatus.textContent = 'Could not reach the weather service. Please try again.';
