@@ -82,13 +82,26 @@ function render() {
     check.setAttribute('aria-label', `${plan.done ? 'Mark incomplete' : 'Complete'}: ${plan.title}`);
     check.textContent = plan.done ? '✓' : '';
     check.addEventListener('click', () => updatePlan(plan.id, { done: !plan.done }));
+    const edit = document.createElement('button');
+    edit.className = 'edit-button';
+    edit.type = 'button';
+    edit.setAttribute('aria-label', `Edit: ${plan.title}`);
+    edit.textContent = '✎';
+    edit.addEventListener('click', () => {
+      document.querySelector('#edit-id').value = plan.id;
+      document.querySelector('#edit-title').value = plan.title;
+      document.querySelector('#edit-time').value = plan.time;
+      document.querySelector('#edit-category').value = plan.category;
+      document.querySelector('#edit-dialog').showModal();
+      document.querySelector('#edit-title').focus();
+    });
     const remove = document.createElement('button');
     remove.className = 'delete-button';
     remove.type = 'button';
     remove.setAttribute('aria-label', `Remove: ${plan.title}`);
     remove.textContent = '×';
     remove.addEventListener('click', () => removePlan(plan.id));
-    actions.append(check, remove);
+    actions.append(check, edit, remove);
     row.append(time, main, actions);
     schedule.append(row);
   }
@@ -133,6 +146,24 @@ document.querySelector('#clear-done').addEventListener('click', () => {
   plansByDay[dayKey(selectedDay)] = currentPlans().filter(plan => !plan.done);
   savePlans();
   render();
+});
+
+document.querySelector('#edit-form').addEventListener('submit', event => {
+  event.preventDefault();
+  const data = new FormData(event.currentTarget);
+  const id = String(data.get('id'));
+  const title = String(data.get('title')).trim();
+  if (!title) return;
+  plansByDay[dayKey(selectedDay)] = currentPlans().map(plan => plan.id === id
+    ? { ...plan, title, time: String(data.get('time')), category: String(data.get('category')) }
+    : plan);
+  savePlans();
+  document.querySelector('#edit-dialog').close();
+  render();
+});
+
+document.querySelector('#cancel-edit').addEventListener('click', () => {
+  document.querySelector('#edit-dialog').close();
 });
 
 render();
