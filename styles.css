@@ -8,3 +8,27 @@
 
 .edit-button{width:28px;height:30px;border:0;background:transparent;color:#7c8275;font-size:18px;cursor:pointer;border-radius:7px}.edit-button:hover{background:#f0efe7;color:var(--green)}
 .edit-dialog{width:min(430px,calc(100% - 30px));border:1px solid var(--line);border-radius:16px;padding:0;background:var(--paper);color:#262b25;box-shadow:0 24px 80px #2225}.edit-dialog::backdrop{background:#1d241d80;backdrop-filter:blur(3px)}.edit-form{display:grid;gap:10px;padding:23px}.edit-form h2{font-size:20px;letter-spacing:-.03em;margin:0 0 4px}.edit-form label{font-size:11px;font-weight:600;color:#656a5e}.edit-form input,.edit-form select{width:100%;height:42px;padding:0 11px;border:1px solid #e0ded4;border-radius:9px;background:#fffefa;font:13px 'DM Sans',sans-serif;color:#33382f;outline:none}.edit-form input:focus,.edit-form select:focus{border-color:#80987a;box-shadow:0 0 0 3px #78957522}.edit-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}.edit-row>div{display:grid;gap:6px}.edit-actions{display:flex;justify-content:flex-end;gap:9px;margin-top:8px}.edit-actions .add-button{height:38px}
+
+/* Fridge-side tablet and phone layout */
+body{padding:clamp(14px,2.5vw,34px);padding-bottom:max(24px,env(safe-area-inset-bottom))}
+.board{max-width:1240px}
+.topbar{gap:18px;align-items:center}
+.header-actions{display:flex;align-items:center;justify-content:flex-end;gap:9px;flex-wrap:wrap}
+.screen-button{min-height:44px;padding:0 14px;border:1px solid var(--line);border-radius:10px;background:var(--paper);color:#42473e;font:600 12px 'DM Sans',sans-serif;cursor:pointer;touch-action:manipulation}
+.screen-button:hover,.screen-button[aria-pressed=true]{border-color:#93a58b;background:#e9eee4}
+.fridge-note{display:flex;align-items:center;gap:13px;margin:0 0 20px;padding:14px 17px;border:1px solid #e4e2d8;border-radius:13px;background:#f0efe7;color:#64695d}
+.fridge-note p{margin:0;font-size:13px;line-height:1.55}
+.fridge-note-icon{display:grid;place-items:center;flex:none;width:34px;height:34px;border-radius:10px;background:#e1e7dc;color:var(--green);font-size:18px}
+.plan{min-height:82px;grid-template-columns:82px 1fr 132px}
+.plan-actions{gap:7px}
+.check-button{width:42px;height:42px;font-size:17px}
+.edit-button,.delete-button{width:40px;height:40px;display:grid;place-items:center;border-radius:9px;touch-action:manipulation}
+.delete-button:hover{background:#fbefec}
+.add-form input,.add-form select{min-height:48px}
+.add-button{min-height:48px;touch-action:manipulation}
+.icon-button,.today-button{min-height:44px}
+.icon-button{width:44px}
+@media(min-width:980px) and (orientation:landscape){.intro{padding:34px 0 24px}h1{font-size:clamp(52px,5.4vw,76px)}.schedule{grid-template-columns:repeat(2,minmax(0,1fr))}.section-heading h2{font-size:21px}}
+@media(max-height:780px) and (orientation:landscape){.intro{padding:22px 0 18px}.eyebrow{margin-bottom:6px}.schedule-section{padding-top:22px}.plan{min-height:68px}.fridge-note{margin-bottom:13px;padding:10px 14px}}
+@media(max-width:700px){.topbar{align-items:flex-start;flex-direction:column}.header-actions{width:100%;justify-content:flex-start}.privacy{margin-right:auto}.screen-button{padding:0 11px}.plan{grid-template-columns:60px 1fr 122px}.fridge-note{align-items:flex-start}}
+@media(prefers-reduced-motion:reduce){.plan:hover{transform:none}}
