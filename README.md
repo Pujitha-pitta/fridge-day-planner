@@ -1,6 +1,6 @@
 # Fridge Day Planner
 
-A shared household schedule designed to stay open on a tablet or phone by the fridge, where everyone can check and update the day.
+A model-independent, browser-based household dashboard inspired by built-in smart-fridge screens. It puts a family greeting, live date and time, local weather, and a shared daily schedule together in one glance.
 
 ## Run it
 
