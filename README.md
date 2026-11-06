@@ -9,7 +9,7 @@ Open `index.html` in a modern browser. No build step or account is needed.
 ## Features
 
 - Browse days and jump back to today
-- Add plans with a time and category
+- Add and edit plans with a time and category
 - Mark plans complete or remove them
 - See daily progress at a glance
 - Save plans in browser local storage
