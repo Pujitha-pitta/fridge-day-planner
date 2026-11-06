@@ -35,7 +35,7 @@ function savePlans() {
 
 function currentPlans() {
   const key = dayKey(selectedDay);
-  if (!plansByDay[key]) plansByDay[key] = key === dayKey(new Date()) ? structuredClone(starterPlans) : [];
+  if (!plansByDay[key]) plansByDay[key] = key === dayKey(new Date()) ? starterPlans.map(plan => ({ ...plan })) : [];
   return plansByDay[key];
 }
 
