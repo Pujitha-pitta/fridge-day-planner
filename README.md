@@ -4,7 +4,7 @@ A shared household schedule designed to stay open on a tablet or phone by the fr
 
 ## Run it
 
-Open the [live Fridge Day Planner](https://pujitha-pitta.github.io/fridge-day-planner/) on the tablet or phone you want to keep by the fridge. No build step or account is needed.
+Open the [live Fridge Day Planner](https://pujitha-pitta.github.io/fridge-day-planner/) in a browser on a fridge display that supports modern web pages, or on a phone/tablet by the fridge. Compatibility with built-in displays varies by model. No build step or account is needed.
 
 ## Use it by the fridge
 
@@ -14,6 +14,11 @@ Open the [live Fridge Day Planner](https://pujitha-pitta.github.io/fridge-day-pl
 - Plans are stored on this device only. The app does not sync to other household members’ phones.
 
 ## Features
+
+- Family greeting saved locally on the display
+- Live clock and date
+- Optional local weather by city; the selected city is sent to Open-Meteo when you request the forecast
+- Schedule display and editing for one shared household screen
 
 - Fridge-side tablet and phone layout with large touch targets
 - Installable PWA shell with offline app loading
