@@ -1,10 +1,10 @@
-# Dayboard
+# Fridge Day Planner
 
 A fridge-friendly daily planner: keep the household's plans visible, mark them done, and add new ones in seconds.
 
 ## Run it
 
-Open `index.html` in a modern browser. No build step or account is needed.
+Open the [live Fridge Day Planner](https://pujitha-pitta.github.io/fridge-day-planner/) or open `index.html` in a modern browser. No build step or account is needed.
 
 ## Features
 
