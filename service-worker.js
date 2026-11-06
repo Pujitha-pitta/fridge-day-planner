@@ -1,4 +1,4 @@
-const CACHE_NAME = 'fridge-day-planner-v6';
+const CACHE_NAME = 'fridge-day-planner-v7';
 const APP_SHELL = ['./', './index.html', './styles.css', './app.js', './manifest.webmanifest', './fridge-icon.svg'];
 
 self.addEventListener('install', event => {
