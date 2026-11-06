@@ -1,0 +1,18 @@
+{
+  "name": "Fridge Day Planner",
+  "short_name": "Fridge Planner",
+  "description": "A shared household schedule displayed by the fridge.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f5f3eb",
+  "theme_color": "#f5f3eb",
+  "icons": [
+    {
+      "src": "fridge-icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
