@@ -243,12 +243,7 @@ if ('serviceWorker' in navigator && location.protocol === 'https:') {
 }
 
 
-const HOUSEHOLD_KEY = 'fridge-day-planner-household-v1';
-const DEFAULT_HOUSEHOLD = "Pitta's Family";
 const WEATHER_KEY = 'fridge-day-planner-weather-v1';
-const householdName = document.querySelector('#household-name');
-const householdDialog = document.querySelector('#household-dialog');
-const householdForm = document.querySelector('#household-form');
 const weatherDialog = document.querySelector('#weather-dialog');
 const weatherForm = document.querySelector('#weather-form');
 const weatherStatus = document.querySelector('#weather-status');
@@ -256,37 +251,20 @@ let weatherPlace = null;
 
 function renderClock() {
   const now = new Date();
-  document.querySelector('#clock-time').textContent = new Intl.DateTimeFormat(undefined, { hour: 'numeric', minute: '2-digit' }).format(now);
+  const options = { hour: 'numeric', minute: '2-digit' };
+  const zoneOptions = { timeZoneName: 'short' };
+  if (weatherPlace && weatherPlace.timezone) {
+    options.timeZone = weatherPlace.timezone;
+    zoneOptions.timeZone = weatherPlace.timezone;
+  }
+  document.querySelector('#clock-time').textContent = new Intl.DateTimeFormat(undefined, options).format(now);
+  const zonePart = new Intl.DateTimeFormat(undefined, zoneOptions).formatToParts(now).find(part => part.type === 'timeZoneName');
+  document.querySelector('#clock-zone').textContent = zonePart ? zonePart.value : '';
   dateLabel.dateTime = dayKey(selectedDay);
   dateLabel.textContent = new Intl.DateTimeFormat(undefined, { weekday: 'long', month: 'long', day: 'numeric' }).format(selectedDay);
 }
 setInterval(renderClock, 30000);
 renderClock();
-
-function loadHouseholdName() {
-  try {
-    const savedName = localStorage.getItem(HOUSEHOLD_KEY);
-    return savedName && savedName !== 'Family' ? savedName : DEFAULT_HOUSEHOLD;
-  } catch {
-    return DEFAULT_HOUSEHOLD;
-  }
-}
-function renderHouseholdName() {
-  householdName.textContent = loadHouseholdName();
-}
-document.querySelector('#edit-household').addEventListener('click', () => {
-  document.querySelector('#household-input').value = loadHouseholdName();
-  householdDialog.showModal();
-});
-document.querySelector('#cancel-household').addEventListener('click', () => householdDialog.close());
-householdForm.addEventListener('submit', event => {
-  event.preventDefault();
-  const name = String(new FormData(householdForm).get('household')).trim();
-  if (!name) return;
-  localStorage.setItem(HOUSEHOLD_KEY, name);
-  renderHouseholdName();
-  householdDialog.close();
-});
 
 function weatherForCode(code) {
   if (code === 0) return ['☀', 'Clear'];
@@ -326,6 +304,11 @@ async function updateWeather() {
     if (!response.ok) throw new Error('Weather request failed');
     const payload = await response.json();
     const current = payload.current;
+    if (payload.timezone) {
+      weatherPlace.timezone = payload.timezone;
+      localStorage.setItem(WEATHER_KEY, JSON.stringify(weatherPlace));
+      renderClock();
+    }
     const [icon, description] = weatherForCode(current.weather_code);
     document.querySelector('#weather-icon').textContent = icon;
     document.querySelector('#weather-temperature').textContent = `${Math.round(current.temperature_2m)}°C`;
@@ -361,7 +344,7 @@ weatherForm.addEventListener('submit', async event => {
       weatherStatus.textContent = 'We couldn’t find that city. Try a nearby larger town.';
       return;
     }
-    const place = { name: result.name, admin1: result.admin1 || '', country: result.country || '', latitude: result.latitude, longitude: result.longitude };
+    const place = { name: result.name, admin1: result.admin1 || '', country: result.country || '', latitude: result.latitude, longitude: result.longitude, timezone: result.timezone || '' };
     localStorage.setItem(WEATHER_KEY, JSON.stringify(place));
     showWeatherPlace(place);
     weatherDialog.close();
@@ -373,7 +356,6 @@ weatherForm.addEventListener('submit', async event => {
   }
 });
 
-renderHouseholdName();
 loadSavedWeather();
 updateWeather();
 setInterval(updateWeather, 30 * 60 * 1000);
