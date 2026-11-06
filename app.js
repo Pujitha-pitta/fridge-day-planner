@@ -163,7 +163,7 @@ document.querySelector('#edit-form').addEventListener('submit', event => {
 });
 
 document.querySelector('#cancel-edit').addEventListener('click', () => {
-  document.querySelector('#edit-dialog').close();
+  closeDialog(document.querySelector('#edit-dialog'));
 });
 
 render();
@@ -343,7 +343,7 @@ document.querySelector('#set-weather').addEventListener('click', () => {
   weatherStatus.textContent = '';
   openDialog(weatherDialog);
 });
-document.querySelector('#cancel-weather').addEventListener('click', () => weatherDialog.close());
+document.querySelector('#cancel-weather').addEventListener('click', () => closeDialog(weatherDialog));
 weatherForm.addEventListener('submit', async event => {
   event.preventDefault();
   const city = String(new FormData(weatherForm).get('city')).trim();
@@ -376,6 +376,7 @@ weatherForm.addEventListener('submit', async event => {
   }
 });
 
+renderClock();
 loadSavedWeather();
 updateWeather();
 setInterval(updateWeather, 30 * 60 * 1000);
