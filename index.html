@@ -2,18 +2,26 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">\n  <meta name="apple-mobile-web-app-capable" content="yes">\n  <meta name="apple-mobile-web-app-title" content="Fridge Planner">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="Fridge Planner">
   <meta name="theme-color" content="#f5f3eb">
   <meta name="description" content="A shared household schedule planner designed to stay open on a kitchen fridge for quick daily planning.">
   <title>Fridge Day Planner — your household plan at a glance</title>
-  <link rel="manifest" href="manifest.webmanifest">\n  <link rel="icon" href="fridge-icon.svg" type="image/svg+xml">\n  <link rel="stylesheet" href="styles.css">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="fridge-icon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="styles.css">
   <script src="app.js" defer></script>
 </head>
 <body>
   <main class="board">
     <header class="topbar">
       <a class="brand" href="#today" aria-label="Fridge Day Planner home"><span class="brand-mark">f</span> fridge day planner</a>
-      <div class="header-actions">\n        <span class="privacy"><span aria-hidden="true">●</span> One shared screen</span>\n        <button id="fullscreen-button" class="screen-button" type="button" aria-pressed="false">Full screen</button>\n        <button id="awake-button" class="screen-button" type="button" aria-pressed="false">Keep screen awake</button>\n      </div>
+      <div class="header-actions">
+        <span class="privacy"><span aria-hidden="true">●</span> One shared screen</span>
+        <button id="fullscreen-button" class="screen-button" type="button" aria-pressed="false">Full screen</button>
+        <button id="awake-button" class="screen-button" type="button" aria-pressed="false">Keep screen awake</button>
+      </div>
     </header>
 
     <section class="intro" id="today" aria-labelledby="title">
@@ -29,7 +37,9 @@
       </div>
     </section>
 
-    <aside class="fridge-note"><span class="fridge-note-icon" aria-hidden="true">▣</span><p>Made for a shared tablet or phone kept by the fridge. Install it on that screen so everyone can check and update the household plan.</p></aside>\n\n    <section class="summary" aria-label="Daily progress">
+    <aside class="fridge-note"><img class="fridge-note-icon" src="fridge-icon.svg" alt="" aria-hidden="true"><p>Made for a shared tablet or phone kept by the fridge. Install it on that screen so everyone can check and update the household plan.</p></aside>
+
+    <section class="summary" aria-label="Daily progress">
       <div><span class="summary-label">HOUSEHOLD PLAN</span><strong id="task-count">0 plans</strong></div>
       <div class="progress-track" aria-hidden="true"><span id="progress-fill"></span></div>
       <span class="progress-label" id="progress-label">A fresh start</span>
