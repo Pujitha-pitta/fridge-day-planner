@@ -237,7 +237,7 @@ document.addEventListener('visibilitychange', () => {
 });
 
 if ('serviceWorker' in navigator && location.protocol === 'https:') {
-  navigator.serviceWorker.register('./service-worker.js').catch(() => {
+  navigator.serviceWorker.register('./service-worker.js', { updateViaCache: 'none' }).then(registration => registration.update()).catch(() => {
     appStatus.textContent = 'Offline support could not be enabled in this browser.';
   });
 }
@@ -280,6 +280,7 @@ function weatherForCode(code) {
 function showWeatherPlace(place) {
   weatherPlace = place;
   document.querySelector('#weather-location').textContent = place ? [place.name, place.admin1, place.country].filter(Boolean).join(', ') : '';
+  renderClock();
 }
 function loadSavedWeather() {
   try {
